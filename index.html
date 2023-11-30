@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>JS Game</title>
-</head>
-<body>
 
-<h1>Some Game</h1>
-<p>Game Description</p>
+<head>
+    <title>JS Game</title>
+    <script src="main.js"> </script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <div class="main-menu-container">
+        <button class="new-game-btn" onClick="createPuzzlePieces()"> New Game </button>
+        <button class="exit-btn" onClick="closeWindow()"> Exit </button>
+    </div>
+
+    <div class="game-board-container-wrapper">
+        <div class="game-board-container">
+            <!-- Puzzle pieces will be added here -->
+        </div>
+    </div>
+
 
 </body>
+
 </html>
