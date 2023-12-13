@@ -1,25 +1,33 @@
-function excludeDraggedPiece(pieces, left, top) {
-    return Array.from(pieces).filter(piece =>
-        piece.style.left !== left || piece.style.top !== top);
+function excludeDraggedPiece(pieces, draggedPiece) {
+    return Array.from(pieces).filter(piece => piece !== draggedPiece); // converting the Nodelist to an array to use the array methods so we can use the filter method. 
 }
 
-function findPieceNextDoor(left, top, pieceWidth, pieceHeight) {
+function findPieceNextDoor(left, top, pieceWidth, pieceHeight, draggedPiece) {
     const pieces = document.querySelectorAll('.puzzlePiece');
     const pieceLeft = parseInt(left, 10);
     const pieceTop = parseInt(top, 10);
     let nextDoorPiece = null;
-    const arrPieces = excludeDraggedPiece(pieces, left, top);
+    const arrPieces = excludeDraggedPiece(pieces, draggedPiece);
+    const centerX = pieceLeft + (parseInt(pieceWidth, 10) / 2);
+    //console.log("🚀 ~ file: main.js:16 ~ findPieceNextDoor ~ centerX:", centerX)
+    const centerY = pieceTop + (parseInt(pieceHeight, 10) / 2);
+    //console.log("🚀 ~ file: main.js:18 ~ findPieceNextDoor ~ centerY:", centerY)
+
     arrPieces.forEach((piece) => {
         const pieceX = parseInt(piece.style.left, 10);
+        //console.log("🚀 ~ file: main.js:22 ~ arrPieces.forEach ~ pieceX:", pieceX)
         const pieceY = parseInt(piece.style.top, 10);
-        // Check if piece is adjacent by comparing positions
-        if (pieceTop >= (pieceX / 2)) {
+        //console.log("🚀 ~ file: main.js:24 ~ arrPieces.forEach ~ pieceY:", pieceY)
+        // Check if the center of the dragged piece is within the bounds of another piece
+        if (centerX > pieceX && centerX < pieceX + parseInt(pieceWidth, 10) && centerY > pieceY && centerY < pieceY + parseInt(pieceHeight, 10)) {
             nextDoorPiece = piece;
             return; // We found the adjacent piece, exit the loop
         }
     });
+
     return nextDoorPiece; // This will be null if no adjacent piece is found
 }
+
 
 function createPuzzlePieces(rows, cols) {
     let gameBoardContainer = document.querySelector(".game-board-container");
@@ -40,6 +48,10 @@ function createPuzzlePieces(rows, cols) {
             piece.style.height = `${pieceHeight}px`;
             piece.style.border = '1px solid black';
             piece.style.position = 'absolute';
+            piece.style.backgroundImage = "url('https://i.postimg.cc/52nJ1Vtm/image.jpg')";
+            piece.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
+            piece.style.backgroundPosition = `-${j * pieceWidth}px -${i * pieceHeight}px`; // Multiplying j by pieceWidth gives the distance from the left edge of the image to the left edge of the current piece's part.
+            // The negative sign (-) is used to shift the background image to the left by this distance, ensuring the correct part of the image appears in each piece.
             gameBoardContainer.appendChild(piece);
         }
     }
@@ -49,23 +61,24 @@ function createPuzzlePieces(rows, cols) {
 // logic to implement the dragging actions.
 function makeDraggable() {
     const pieces = document.querySelectorAll('.puzzlePiece');
-
     let draggedPiece = null;
     let offsetX = 0;
     let offsetY = 0;
+    let originalX = null;
+    let originalY = null;
 
     pieces.forEach(piece => {
         piece.addEventListener('mousedown', function (e) {
             draggedPiece = this;
-            offsetX = e.offsetX;
-            offsetY = e.offsetY;
-            // Bring the dragged piece to the front.
+            originalX = draggedPiece.style.left;
+            originalY = draggedPiece.style.top;
+            offsetX = e.clientX - parseInt(draggedPiece.style.left, 10);
+            offsetY = e.clientY - parseInt(draggedPiece.style.top, 10);
             draggedPiece.style.zIndex = 1000;
         });
 
         piece.addEventListener('mouseup', function () {
             if (draggedPiece) {
-                // Reset the z-index
                 draggedPiece.style.zIndex = '';
                 draggedPiece = null;
             }
@@ -75,26 +88,19 @@ function makeDraggable() {
     // Listen to mousemove on the entire container to handle dragging.
     document.querySelector('.game-board-container').addEventListener('mousemove', function (e) {
         if (draggedPiece) {
-            const pieceNextDoor = findPieceNextDoor(draggedPiece.style.left, draggedPiece.style.top, draggedPiece.style.width, draggedPiece.style.height);
-            console.log("🚀 ~ file: main.js:50 ~ pieceNextDoor:", pieceNextDoor)
             draggedPiece.style.left = e.clientX - offsetX + 'px';
             draggedPiece.style.top = e.clientY - offsetY + 'px';
-            swapPieces(draggedPiece, pieceNextDoor, this);
+
+            const pieceNextDoor = findPieceNextDoor(originalX, originalY, draggedPiece.style.width, draggedPiece.style.height, draggedPiece);
+            if (pieceNextDoor) {
+                // Move the piece next door to where the dragged piece started
+                pieceNextDoor.style.left = originalX;
+                pieceNextDoor.style.top = originalY;
+            }
         }
     });
-}
-
-// Function to swap positions of pieces.
-function swapPieces(draggedPiece, pieceNextDoor) {
-    console.log("🚀 ~ file: main.js:68 ~ swapPieces ~ pieceNextDoor:", pieceNextDoor)
-    console.log("🚀 ~ file: main.js:68 ~ swapPieces ~ draggedPiece:", draggedPiece)
-    // calculate the distance between the offsets of the two pieces and when the dragged piece reaches the median then the pieces swipes their offsets so that the pieces will be dragged outomatically to their places 
-    // like in a android when you want to play with the positioning of the apps. 
 }
 
 function closeWindow() {
     window.close();
 }
-
-// X - 1415 / 8 = 176.875
-// Y - 630 / 4 = 157.5 

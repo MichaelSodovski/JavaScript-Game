@@ -32,3 +32,7 @@
 .exit-btn {
     width: 300px;
 }
+
+.puzzlePiece {
+    transition: left 0.5s, top 0.5s;
+}
