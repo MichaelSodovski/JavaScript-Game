@@ -1,36 +1,17 @@
 .main-menu-container {
-    display: flex;
-    flex-direction: row;
-    border: 1px black solid;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    background-color: antiquewhite;
-    height: 40px;
+
 }
 
 .game-board-container-wrapper {
-    border: 1px solid black;
-    height: 92vh;
-    background-color: aliceblue;
-    margin-top: 10px;
+
 }
 
 .game-board-container {
-    border: 1px solid black;
-    background-color: rgb(91, 174, 246);
-    height: 90vh;
-    margin-top: 8px;
-    margin-left: 8px;
-    margin-right: 8px;
-    position: relative;
+
 }
 
-.new-game-btn {
-    width: 300px;
-}
+.btn {
 
-.exit-btn {
-    width: 300px;
 }
 
 .puzzlePiece {

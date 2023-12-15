@@ -1,3 +1,70 @@
+class Button {
+    constructor(innerHTML, className, callBack) {
+        this.innerHTML = innerHTML;
+        this.className = className;
+        this.buttonElement = this.createButton();
+        this.callBack = callBack;
+        this.onClick();
+    }
+
+    createButton() {
+        let button = document.createElement('button');
+        button.innerHTML = this.innerHTML;
+        button.className = this.className;
+        button.style.width = "300px";
+        return button;
+    }
+
+    onClick() {
+        this.buttonElement.addEventListener('click', () => this.callBack());
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Create main menu container.
+    let mainMenuContainer = document.createElement('div');
+    mainMenuContainer.className = "main-menu-container";
+    mainMenuContainer.style.display = "flex";
+    mainMenuContainer.style.flexDirection = "row";
+    mainMenuContainer.style.border = "1px solid black";
+    mainMenuContainer.style.flexWrap = "nowrap";
+    mainMenuContainer.style.justifyContent = "space-between";
+    mainMenuContainer.style.backgroundColor = "antiquewhite";
+    mainMenuContainer.style.height = "40px";
+    // Create game board container wrapper.
+    let gameBoardContainerWrapper = document.createElement('div');
+    gameBoardContainerWrapper.className = "game-board-container-wrapper";
+    gameBoardContainerWrapper.style.border = "1px solid black";
+    gameBoardContainerWrapper.style.height = "92vh";
+    gameBoardContainerWrapper.style.backgroundColor = "aliceblue";
+    gameBoardContainerWrapper.style.marginTop = "10px";
+    // Create game board container.
+    let gameBoardContainer = document.createElement('div');
+    gameBoardContainer.className = "game-board-container";
+    gameBoardContainer.style.border = "1px solid black";
+    gameBoardContainer.style.backgroundColor = "rgb(91, 174, 246)";
+    gameBoardContainer.style.height = "90vh";
+    gameBoardContainer.style.marginTop = "8px";
+    gameBoardContainer.style.marginLeft = "8px";
+    gameBoardContainer.style.marginRight = "8px";
+    gameBoardContainer.style.position = "relative";
+    // Append game board container to its wrapper.
+    gameBoardContainerWrapper.appendChild(gameBoardContainer);
+    // Append containers to the body.
+    document.body.appendChild(mainMenuContainer);
+    document.body.appendChild(gameBoardContainerWrapper);
+    // Create new game button and append it to the container.
+    const newGameButton = new Button("New Game", "btn", () => this.createPuzzlePieces(4, 8));
+    document.querySelector('.main-menu-container').appendChild(newGameButton.buttonElement);
+    // create exit game button and append it to the container.
+    const exitGameButton = new Button("Exit", "btn", () => this.redirect());
+    document.querySelector('.main-menu-container').appendChild(exitGameButton.buttonElement);
+});
+
+function redirect() {
+    window.location.href = 'https://www.google.com';
+}
+
 function excludeDraggedPiece(pieces, draggedPiece) {
     return Array.from(pieces).filter(piece => piece !== draggedPiece); // converting the Nodelist to an array to use the array methods so we can use the filter method. 
 }
@@ -101,6 +168,3 @@ function makeDraggable() {
     });
 }
 
-function closeWindow() {
-    window.close();
-}
